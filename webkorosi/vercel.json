@@ -1,0 +1,15 @@
+{
+    "builds": [
+      {
+        "src": "webkorosi/wsgi.py",
+        "use": "@vercel/python",
+        "config": {"maxLambdaSiza": "15mb", "runtime" :"python3.10.11"}
+      }
+    ],
+    "routes": [
+      {
+        "src": "/(.*)",
+        "dest": "webkorosi/wsgi.py"
+      }
+    ]
+}
