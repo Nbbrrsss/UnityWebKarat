@@ -2,8 +2,7 @@
     "builds": [
       {
         "src": "webkorosi/wsgi.py",
-        "use": "@vercel/python",
-        "config": {"maxLambdaSiza": "15mb", "runtime" :"python3.9"}
+        "use": "@vercel/python"
       }
     ],
     "routes": [
