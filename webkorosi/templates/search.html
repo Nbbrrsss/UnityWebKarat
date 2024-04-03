@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% block title %}Search{% endblock title %}
+{% block body %}
+
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap">
+
+<style>
+
+</style>
+
+<div class="s013">
+  <form method="post" action="/search_compound">
+    {% csrf_token %}
+    <fieldset>
+      <legend class="text-white fw-bold d-block" >Corrosion Drugs<span class="text-secondary"> Search Engine</span></legend>
+    </fieldset>
+    <div class="inner-form">
+      <div class="left">
+        <div class="input-wrap first">
+          <div class="input-field first">
+            <label>What you search?</label>
+            <input type="text" name="search_input" placeholder="ex: Corrosion compounds, ACID" />
+          </div>
+        </div>
+      </div>
+      <button class="btn-search" type="submit">Search</button>
+    </div>
+  </form>
+</div>
+
+<div class="section changelogs pt-0">
+  <div class = "container">
+    <div class="row justify-center" style="margin-top:15px">
+      <div class = "lg:col-10">
+        <div class="row mb-10 lg:mt-0">
+        {% comment %} Load data  {% endcomment %}
+        {% comment %} <div class="border-border lg:col-12 lg:pl-10 lg:pb-10 col-6">
+          <div class="border-solid border-cyan-300 changelogs-content rounded-xl bg-white p-6 shadow-lg lg:p-10">
+            <ul>
+              <li>
+                <a href="{{instance.fields.ref}}" target="blank">
+                  <b>{{instance.fields.common_name}}</b>
+                </a>
+              </li>
+              <li>Senyawa dengan Rumus Kimia {{instance.fields.formula}} adalah senyawa dengan Tata Nama Kimia <b>{{ instance.fields.IUPAC_name }}</b> ini memiliki Persentase Energi Ionisasi sebesar {{ instance.fields.IE_EXP }}.
+                Berat molekul dari senyawa ini adalah {{ instance.fields.molecular_weight }} g/mol. {{ instance.fields.common_name }} memiliki kemampuan untuk membentuk ikatan hidrogen, dengan Hydrogen Acceptor Count sebanyak {{ instance.fields.hydrogen_acceptor }} dan Hydrogen Donor Count sebanyak {{ hydrogen_donor }}.
+                Selain itu, kemampuan atom dalam molekul ini untuk menarik pasangan elektron sebesar {{ instance.fields.electronegativity }} dan ukuran kestabilan molekulnya juga mencapai {{ instance.fields.electrophilicity }}
+                <span></span>
+              </li>
+            </li>
+          </ul>
+        </div>
+      </div> {% endcomment %}
+      <div class="articles">
+            {% for instance in data %}
+            <article>
+              <div class="article-wrapper">
+                <div class="article-body">
+                  <h2>{{instance.fields.common_name}}</h2>
+                  <b>{{ instance.fields.IUPAC_name }}</b>
+                  <p>
+                    A compound with Chemical Formula {{instance.fields.formula}} is a compound that has an Inhibitor Efficiency Percentage of {{ instance.fields.IE_EXP }}%.
+                  </p>
+                  <a href="{{instance.fields.ref}}" target="_blank" class="read-more" style="font-family: 'Bebas Neue', sans-serif;">
+                    Read more <span class="sr-only">about {{instance.fields.common_name}}</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
+                  </a>
+                </div>
+              </div>
+            </article>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="flex justify-center" style="margin-bottom:20px;">
+          <nav aria-label="Page navigation example">
+            <ul class="flex list-style-none">
+              <li class="page-item {% if not data.has_previous %} disabled {% endif %}"><a
+                  class="page-link relative block py-1.5 px-3 rounded border-0 bg-transparent outline-none transition-all duration-300 rounded text-gray-500 pointer-events-none focus:shadow-none"
+                  href="{% if data.has_previous %} {% url 'search' %}?page={{data.previous_page_number}} {% endif %}" tabindex="-1" aria-disabled="true">Previous</a></li>
+              {% if data.has_previous %}
+              <li class="page-item"><a
+                  class="page-link relative block py-1.5 px-3 rounded border-0 bg-transparent outline-none transition-all duration-300 rounded text-gray-800 hover:text-gray-800 hover:bg-gray-200 focus:shadow-none"
+                  href="{% if data.has_previous %} {% url 'search' %}?page={{ data.number|add:-1 }} {% endif %}">{{ data.number|add:-1 }}</a></li>
+              {% endif %}
+              <li class="page-item active"><a
+                  class="page-link relative block py-1.5 px-3 rounded border-0 bg-blue-600 outline-none transition-all duration-300 rounded text-white hover:text-white hover:bg-blue-600 shadow-md focus:shadow-md"
+                  href="#"> {{ data.number }} <span class="visually-hidden"></span></a></li>
+              {% if data.has_next %}
+              <li class="page-item"><a
+                  class="page-link relative block py-1.5 px-3 rounded border-0 bg-transparent outline-none transition-all duration-300 rounded text-gray-800 hover:text-gray-800 hover:bg-gray-200 focus:shadow-none"
+                  href="{% if data.has_next %} {% url 'search'%}?page={{ data.number|add:1 }} {% endif %}">{{ data.number|add:1 }}</a></li>
+              {% endif %}
+              <li class="page-item {% if not data.has_next %} disabled {% endif %}"><a
+                  class="page-link relative block py-1.5 px-3 rounded border-0 bg-transparent outline-none transition-all duration-300 rounded text-gray-800 hover:text-gray-800 hover:bg-gray-200 focus:shadow-none"
+                  href="{% if data.has_next %} {% url 'search'%}?page={{data.next_page_number}} {% endif %}">Next</a></li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </div>
+  <div>
+</div>
+
+<script src="/static/jssearch/extention/choices.js"></script>
+<script>
+  const choices = new Choices('[data-trigger]',
+  {
+    searchEnabled: false,
+    itemSelectText: '',
+  });
+
+</script>
+{% endblock body %}
