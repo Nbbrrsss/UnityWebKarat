@@ -1,19 +1,19 @@
+from pyexpat.errors import messages
 from django.shortcuts import render
 from django.core import serializers
 from django.core.paginator import Paginator, EmptyPage
 from django.http import JsonResponse, HttpResponse
 from django.http import HttpResponseRedirect
-import tensorflow 
-# Import fungsi load_model dari TensorFlow Keras
-from keras.preprocessing.sequence import pad_sequences
-from keras.preprocessing.text import Tokenizer
-from sklearn.preprocessing import LabelEncoder
-from keras.models import load_model
+# import tensorflow 
+# # Import fungsi load_model dari TensorFlow Keras
+# from keras.preprocessing.sequence import pad_sequences
+# from keras.preprocessing.text import Tokenizer
+# from sklearn.preprocessing import LabelEncoder
+# from keras.models import load_model
 import pandas as pd
 import joblib
 from django.conf import settings
 import os
-import joblib
 import json
 
 import re
@@ -265,93 +265,93 @@ def view_pdf(request,orang):
 def chatbot(request):
     return render(request, 'chatbot.html')
     
-def inputan_user(request):
-    with open('ml_models/model_chatbot/intents english.json', 'r', encoding="utf-8") as f:
-        data = json.load(f)  # Membaca data dari file JSON
+# def inputan_user(request):
+#     with open('ml_models/model_chatbot/intents english.json', 'r', encoding="utf-8") as f:
+#         data = json.load(f)  # Membaca data dari file JSON
 
-    # Membuat DataFrame dari data JSON
-    df_chatbot = pd.DataFrame(data['intents'])
+#     # Membuat DataFrame dari data JSON
+#     df_chatbot = pd.DataFrame(data['intents'])
 
-    # Membuat dictionary kosong untuk menyimpan data yang akan diubah ke DataFrame
-    dic = {"tag": [], "patterns": [], "responses": []}
-    for i in range(len(df_chatbot)):
-        # Mengambil pola (patterns) dari DataFrame
-        ptrns = df_chatbot[df_chatbot.index == i]['patterns'].values[0]
-        # Mengambil respons dari DataFrame
-        rspns = df_chatbot[df_chatbot.index == i]['responses'].values[0]
-        # Mengambil tag dari DataFrame
-        tag = df_chatbot[df_chatbot.index == i]['tag'].values[0]
-        for j in range(len(ptrns)):
-            dic['tag'].append(tag)  # Menambahkan tag ke dalam dictionary
-            # Menambahkan pola ke dalam dictionary
-            dic['patterns'].append(ptrns[j])
-            # Menambahkan respons ke dalam dictionary
-            dic['responses'].append(rspns)
+#     # Membuat dictionary kosong untuk menyimpan data yang akan diubah ke DataFrame
+#     dic = {"tag": [], "patterns": [], "responses": []}
+#     for i in range(len(df_chatbot)):
+#         # Mengambil pola (patterns) dari DataFrame
+#         ptrns = df_chatbot[df_chatbot.index == i]['patterns'].values[0]
+#         # Mengambil respons dari DataFrame
+#         rspns = df_chatbot[df_chatbot.index == i]['responses'].values[0]
+#         # Mengambil tag dari DataFrame
+#         tag = df_chatbot[df_chatbot.index == i]['tag'].values[0]
+#         for j in range(len(ptrns)):
+#             dic['tag'].append(tag)  # Menambahkan tag ke dalam dictionary
+#             # Menambahkan pola ke dalam dictionary
+#             dic['patterns'].append(ptrns[j])
+#             # Menambahkan respons ke dalam dictionary
+#             dic['responses'].append(rspns)
 
-    # Membuat DataFrame baru dari dictionary
-    df_chatbot = pd.DataFrame.from_dict(dic)
+#     # Membuat DataFrame baru dari dictionary
+#     df_chatbot = pd.DataFrame.from_dict(dic)
 
-    # Membuat objek Tokenizer dengan parameter tertentu
-    tokenizer = Tokenizer(lower=True, split=' ')
-    # Mengonversi teks pola menjadi urutan angka
-    tokenizer.fit_on_texts(df_chatbot['patterns'])
+#     # Membuat objek Tokenizer dengan parameter tertentu
+#     tokenizer = Tokenizer(lower=True, split=' ')
+#     # Mengonversi teks pola menjadi urutan angka
+#     tokenizer.fit_on_texts(df_chatbot['patterns'])
 
-    # Mengonversi teks pola menjadi urutan angka
-    ptrn2seq = tokenizer.texts_to_sequences(df_chatbot['patterns'])
-    # Melakukan padding terhadap urutan angka
-    X = pad_sequences(ptrn2seq, padding='post')
+#     # Mengonversi teks pola menjadi urutan angka
+#     ptrn2seq = tokenizer.texts_to_sequences(df_chatbot['patterns'])
+#     # Melakukan padding terhadap urutan angka
+#     X = pad_sequences(ptrn2seq, padding='post')
 
-    lbl_enc = LabelEncoder()  # Membuat objek LabelEncoder
-    # Mengonversi label kelas menjadi angka
-    y = lbl_enc.fit_transform(df_chatbot['tag'])
+#     lbl_enc = LabelEncoder()  # Membuat objek LabelEncoder
+#     # Mengonversi label kelas menjadi angka
+#     y = lbl_enc.fit_transform(df_chatbot['tag'])
 
-    # Memuat model yang telah dilatih sebelumnya
-    model_path = 'ml_models/model_chatbot/my_model_English.keras'  # Perbarui dengan path yang benar
-    loaded_model = load_model(model_path)  # Memuat model yang telah dilatih
+#     # Memuat model yang telah dilatih sebelumnya
+#     model_path = 'ml_models/model_chatbot/my_model_English.keras'  # Perbarui dengan path yang benar
+#     loaded_model = load_model(model_path)  # Memuat model yang telah dilatih
 
-    response_user = []  # List untuk menyimpan respons dari pengguna
-    response_bot = []  # List untuk menyimpan respons dari bot
+#     response_user = []  # List untuk menyimpan respons dari pengguna
+#     response_bot = []  # List untuk menyimpan respons dari bot
 
-    # menampilkan hasil histori dari chat sebelumnya
-    # if "messages" not in st.session_state:
-        # Membuat session state untuk menyimpan histori chat sebelumnya
-        # st.session_state.messages = []
-    # for message in st.session_state.messages:
-    #     with st.chat_message(message["role"]):
-    #         # Menampilkan histori chat sebelumnya
-    #         st.markdown(message["content"])
+#     # menampilkan hasil histori dari chat sebelumnya
+#     # if "messages" not in st.session_state:
+#         # Membuat session state untuk menyimpan histori chat sebelumnya
+#         # st.session_state.messages = []
+#     # for message in st.session_state.messages:
+#     #     with st.chat_message(message["role"]):
+#     #         # Menampilkan histori chat sebelumnya
+#     #         st.markdown(message["content"])
 
-    # Dapatkan input pengguna
+#     # Dapatkan input pengguna
 
-    # Proses input pengguna dan tampilkan respons
-    if request.method == 'POST':
-        text = []
-        # Menghapus karakter selain huruf dan tanda kutip dari request
-        txt = re.sub('[^a-zA-Z\']', ' ', request)
-        txt = txt.lower()  # Mengonversi request menjadi huruf kecil
-        txt = txt.split()  # Membagi request menjadi kata-kata
-        txt = " ".join(txt)  # Menggabungkan kata-kata kembali menjadi teks
-        text.append(txt)  # Menambahkan teks ke dalam list
+#     # Proses input pengguna dan tampilkan respons
+#     if request.method == 'POST':
+#         text = []
+#         # Menghapus karakter selain huruf dan tanda kutip dari request
+#         txt = re.sub('[^a-zA-Z\']', ' ', request)
+#         txt = txt.lower()  # Mengonversi request menjadi huruf kecil
+#         txt = txt.split()  # Membagi request menjadi kata-kata
+#         txt = " ".join(txt)  # Menggabungkan kata-kata kembali menjadi teks
+#         text.append(txt)  # Menambahkan teks ke dalam list
 
-        # Mengonversi teks input pengguna menjadi urutan angka
-        x_test = tokenizer.texts_to_sequences(text)
-        # Melakukan padding terhadap urutan angka
-        x_test = pad_sequences(x_test, padding='post', maxlen=X.shape[1])
-        # Memprediksi kelas dengan model yang telah dilatih
-        y_pred = loaded_model.predict(x_test)
-        y_pred = y_pred.argmax()  # Mengambil indeks kelas dengan nilai probabilitas tertinggi
-        # Mengonversi indeks kelas kembali menjadi label kelas
-        tag = lbl_enc.inverse_transform([y_pred])[0]
-        # Mengambil respons berdasarkan label kelas
-        responses = df_chatbot[df_chatbot['tag'] == tag]['responses'].values[0]
+#         # Mengonversi teks input pengguna menjadi urutan angka
+#         x_test = tokenizer.texts_to_sequences(text)
+#         # Melakukan padding terhadap urutan angka
+#         x_test = pad_sequences(x_test, padding='post', maxlen=X.shape[1])
+#         # Memprediksi kelas dengan model yang telah dilatih
+#         y_pred = loaded_model.predict(x_test)
+#         y_pred = y_pred.argmax()  # Mengambil indeks kelas dengan nilai probabilitas tertinggi
+#         # Mengonversi indeks kelas kembali menjadi label kelas
+#         tag = lbl_enc.inverse_transform([y_pred])[0]
+#         # Mengambil respons berdasarkan label kelas
+#         responses = df_chatbot[df_chatbot['tag'] == tag]['responses'].values[0]
 
-        # Gunakan respons tetap daripada random.choice(responses)
-        # Memilih respons bot atau respons default jika tidak ada respons yang sesuai
-        bot_response = random.choice(
-            responses) if responses else "I cant understand what u say."
+#         # Gunakan respons tetap daripada random.choice(responses)
+#         # Memilih respons bot atau respons default jika tidak ada respons yang sesuai
+#         bot_response = random.choice(
+#             responses) if responses else "I cant understand what u say."
         
 
-    return render(request, 'base.html', bot_response)
+#     return render(request, 'base.html', bot_response)
         
     #     return JsonResponse({"bot_response": bot_response})
     # else:

@@ -11,6 +11,6 @@ urlpatterns = [
     path('app',views.predict, name="app"),
     path('manual_app',views.ml_ops, name="manual_app"),
     path('view_pdf/<str:orang>/', views.view_pdf, name='view_pdf'),
-    path('inputan_user/', views.inputan_user, name='inputan_user'),
+    # path('inputan_user/', views.inputan_user, name='inputan_user'),
     
 ]
